@@ -1,4 +1,4 @@
-# Rest-Golang-Api-Using-Mux
+#Golang-Rest-Api-Using-Mux
 
 ## Build Setup
 
