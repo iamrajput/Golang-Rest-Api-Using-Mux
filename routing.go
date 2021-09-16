@@ -9,10 +9,11 @@ import (
 
 func HandleRiuting() {
 	r := mux.NewRouter()
-	r.HandleFunc("/api/create/employee", createEmployee).Methods("POST")
-	r.HandleFunc("/api/employees", getEmployees).Methods("GET")
-	r.HandleFunc("/api/employee/{id}", getEmployeeById).Methods("GET")
-	r.HandleFunc("/api/update/employee/{id}", updateEmployee).Methods("PUT")
-	r.HandleFunc("/api/remove/employee/{id}", removeEmployee).Methods("DELETE")
+	api := r.PathPrefix("/api").Subrouter()
+	api.HandleFunc("/create/employee", createEmployee).Methods(http.MethodPost)
+	api.HandleFunc("/employees", getEmployees).Methods(http.MethodGet)
+	api.HandleFunc("/employee/{id}", getEmployeeById).Methods(http.MethodGet)
+	api.HandleFunc("/update/employee/{id}", updateEmployee).Methods(http.MethodPut)
+	api.HandleFunc("/remove/employee/{id}", removeEmployee).Methods(http.MethodDelete)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

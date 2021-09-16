@@ -8,7 +8,7 @@ import (
 )
 
 var DB *gorm.DB
-var dsn = "username:password@tcp(localhost:3306)/database?charset=utf8&parseTime=True&loc=Local"
+var dsn = "root:codelogicx101@tcp(localhost:3306)/laravel-api?charset=utf8&parseTime=True&loc=Local"
 var err error
 
 func dataMigration() {

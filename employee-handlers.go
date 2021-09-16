@@ -10,43 +10,54 @@ import (
 
 //create new record
 func createEmployee(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 	var emp Employee
 	_ = json.NewDecoder(r.Body).Decode(&emp)
 	fmt.Printf("%+v", &emp)
 	DB.Create(&emp)
-	json.NewEncoder(w).Encode(emp)
-	fmt.Println("DONE")
+	sendResponse(w, emp, "Employee Created Successfully")
 }
 
 //Get all the employee
 func getEmployees(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 	var employees []Employee
 	DB.Find(&employees)
-	json.NewEncoder(w).Encode(employees)
-	w.WriteHeader(http.StatusOK)
-	//w.Write([]byte(employees))
+	sendResponse(w, employees, "Employee List")
 }
 
 func getEmployeeById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 	var emp Employee
-	DB.First(&emp, mux.Vars(r)["id"])
-	json.NewEncoder(w).Encode(emp)
+	result := DB.First(&emp, mux.Vars(r)["id"])
+	if result.Error != nil {
+		notFound(w)
+		return
+	}
+	sendResponse(w, emp, "Employee details")
 }
 
 func updateEmployee(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 	var emp Employee
-	DB.First(&emp, mux.Vars(r)["id"])
+	result := DB.First(&emp, mux.Vars(r)["id"])
+	if result.Error != nil {
+		notFound(w)
+		return
+	}
 	json.NewDecoder(r.Body).Decode(&emp)
 	DB.Save(&emp)
-	json.NewEncoder(w).Encode(emp)
+	sendResponse(w, emp, "Employee Updated Successfully")
 }
+
 func removeEmployee(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 	var emp Employee
+	result := DB.First(&emp, mux.Vars(r)["id"])
+	if result.Error != nil {
+		notFound(w)
+		return
+	}
 	DB.Delete(&emp, mux.Vars(r)["id"])
-	json.NewEncoder(w).Encode("Employee removed")
+	w.Write([]byte(`{"message": "Employee removed Successfully"}`))
 }
